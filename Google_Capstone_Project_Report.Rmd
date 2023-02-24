@@ -1,0 +1,1177 @@
+---
+title: "Google Capstone Project"
+author: "Hassan Shah"
+date: "2022 08 14"
+output: html_document
+---
+
+## SCENARIO
+
+You are a junior data analyst working in the marketing analyst team at Cyclistic, a bike-share company in Chicago. The director of marketing believes the company’s future success depends on maximizing the number of annual memberships. Therefore, your team wants to understand how casual riders and annual members use Cyclistic bikes differently. From these insights, your team will design a new marketing strategy to convert casual riders into annual members. But first, Cyclistic executives must approve your recommendations, so they must be backed up with compelling data insights and professional data visualizations.
+
+## TEAM AND STAKEHOLDERS
+
+● Cyclistic: A bike-share program that features more than 5,800 bicycles and 600 docking stations. Cyclistic sets itself apart by also offering reclining bikes, hand tricycles, and cargo bikes, making bike-share more inclusive to people with disabilities and riders who can’t use a standard two-wheeled bike. The majority of riders opt for traditional bikes; about 8% of riders use the assistive options. Cyclistic users are more likely to ride for leisure, but about 30% use them to commute to work each day.
+
+● Lily Moreno: The director of marketing and your manager. Moreno is responsible for the development of campaigns and initiatives to promote the bike-share program. These may include email, social media, and other channels.
+
+● Cyclistic marketing analytics team: A team of data analysts who are responsible for collecting, analyzing, and reporting data that helps guide Cyclistic marketing strategy. You joined this team six months ago and have been busy learning about Cyclistic’s mission and business goals — as well as how you, as a junior data analyst, can help Cyclistic achieve them.
+
+● Cyclistic executive team: The notoriously detail-oriented executive team will decide whether to approve the recommended marketing program.
+
+## REPORTS
+
+The report contains following deliverables:
+
+● A clear statement of the business task
+
+● A description of all data sources used
+
+● Documentation of any cleaning or manipulation of data
+
+● A summary of your analysis
+
+● Supporting visualizations and key findings
+
+● Your top three recommendations based on your analysis
+
+-------------------
+
+## ASK
+
+#### Key tasks 
+
+1. Identify the business task 
+2. Consider key stakeholders 
+
+#### Guiding questions 
+
+● What is the problem you are trying to solve? 
+
+I am trying to convert casual riders, at Cyclistic, into annual members, for maximizing company’s growth?
+
+● How can your insights drive business decisions? 
+
+By analyzing the Cyclistic historical bike trip data, different trends can be identified. Those insights can drive the business decision.
+
+#### Deliverable 
+
+- [x] A clear statement of the business task
+
+“Converting casual riders, at Cyclistic, into annual members, for maximizing company’s growth”
+
+----------------------
+
+## PREPARE
+
+#### Key tasks 
+
+1. Download data and store it appropriately. 
+2. Identify how it’s organized. 
+3. Sort and filter the data.
+4. Determine the credibility of the data.
+
+#### Guiding questions 
+
+● Where is your data located? 
+
+The data is located at <https://divvy-tripdata.s3.amazonaws.com/index.html>.
+
+● How is the data organized? 
+
+It is a structured data and is provided in various .zip files which contain .csv files. These csv files have data organized into quarters or years.
+
+● Are there issues with bias or credibility in this data? Does your data ROCCC? 
+
+The population covered is company’s own client hence there is no issue of bias. Being a primary collected data, it’s also credible. Thus the given data is reliable, organized, comprehensive, current and cited.
+
+● How are you addressing licensing, privacy, security, and accessibility? 
+
+The data is licensed by the company. As for the privacy, the personal information of clients isn’t included. 
+
+● How did you verify the data’s integrity? 
+
+All data sets have column names labelled identically. Data in each cell matches its column data type.
+
+● How does it help you answer your question? 
+
+It may provide information that helps understand the difference between both rider types.
+
+● Are there any problems with the data? 
+
+The data has some missing and incorrect entries.
+
+#### Deliverable
+
+- [x] A description of all data sources used
+
+"The data is from the last 12 months"
+
+-----------------
+
+## PROCESS
+
+#### Key tasks 
+
+1. Check the data for errors. 
+2. Choose your tools. 
+3. Transform the data so you can work with it effectively. 
+4. Document the cleaning process.
+
+#### Guiding questions 
+
+● What tools are you choosing and why? 
+
+I have used R to process, clean and present data
+
+● Have you ensured your data’s integrity? 
+
+Yes, the data is consistent throughout the column.
+
+● What steps have you taken to ensure that your data is clean? 
+
+Each column is formatted to the correct data type. Duplicate entries are checked. Missing and incorrect entries are removed. 
+
+● How can you verify that your data is clean and ready to analyze? 
+
+Data is repeated checked after each step of cleaning.
+
+● Have you documented your cleaning process so you can review and share those results?
+
+Each step of cleaning is clearly documented in this RMarkdown document.
+
+#### Deliverable 
+
+- [x] Documentation of any cleaning or manipulation of data
+
+----------------------
+
+## ANALYZE
+
+#### Key tasks 
+
+1. Aggregate your data so it’s useful and accessible. 
+2. Organize and format your data. 
+3. Perform calculations. 
+4. Identify trends and relationships.
+
+### Setting Up
+
+Loading required packages
+
+```{r}
+
+library(tidyverse) #To wrangle data
+
+library(lubridate) #For wrangling date attributes
+
+library(dplyr) #For data manipulation and cleaning
+
+library(janitor) #For examining dirty data
+
+library(ggplot2) #To visualize data
+
+library(scales) #To use in plots
+
+library(mapview) #To locate data
+
+```
+
+Current working directory
+
+```{r}
+
+getwd() 
+
+```
+
+### Step 1: Collect Data
+
+Setting the Working Directory and Loading the Data
+
+```{r}
+
+setwd("F:/Users/Hassan Shah/Desktop/Google Capstone Project/Data")
+
+Data_2021_07 <- read_csv("2021_07_Trips_Table.csv")
+Data_2021_08 <- read_csv("2021_08_Trips_Table.csv")
+Data_2021_09 <- read_csv("2021_09_Trips_Table.csv")
+Data_2021_10 <- read_csv("2021_10_Trips_Table.csv")
+Data_2021_11 <- read_csv("2021_11_Trips_Table.csv")
+Data_2021_12 <- read_csv("2021_12_Trips_Table.csv")
+
+Data_2022_01 <- read_csv("2022_01_Trips_Table.csv")
+Data_2022_02 <- read_csv("2022_02_Trips_Table.csv")
+Data_2022_03 <- read_csv("2022_03_Trips_Table.csv")
+Data_2022_04 <- read_csv("2022_04_Trips_Table.csv")
+Data_2022_05 <- read_csv("2022_05_Trips_Table.csv")
+Data_2022_06 <- read_csv("2022_06_Trips_Table.csv")
+
+```
+
+### Step 2: Wrangle Data
+
+Understanding loaded data sets
+
+```{r}
+
+compare_df_cols(Data_2021_07, Data_2021_08, Data_2021_09, Data_2021_10, Data_2021_11, Data_2021_12, Data_2022_01, Data_2022_02, Data_2022_03, Data_2022_04, Data_2022_05, Data_2022_06, return = "mismatch")
+
+```
+
+Following changes are needed:
+
+a. Dates in the data sets Data_2022_01 are formatted differently. They are needed to match to other data sets.
+
+#### Manipulate Datasets to match each other
+
+```{r}
+
+Data_2022_01 <- mutate(Data_2022_01, started_at = mdy_hm(started_at),
+                   ended_at = mdy_hm(ended_at))
+
+```
+
+Rechecking
+
+```{r}
+
+glimpse(Data_2022_01)
+
+```
+
+#### Combining all the dataframes
+
+```{r}
+
+Trips <- bind_rows(Data_2021_07, Data_2021_08, Data_2021_09, Data_2021_10, Data_2021_11, Data_2021_12, Data_2022_01, Data_2022_02, Data_2022_03, Data_2022_04, Data_2022_05, Data_2022_06)
+
+```
+
+Observing Big Data frame for Changes
+
+```{r}
+
+str(Trips)
+
+unique(Trips$member_casual)
+
+unique(Trips$rideable_type)
+
+```
+
+Following changes are needed:
+
+a. Five new variables, date, month, day, year and day_of_week, are created by parsing started_at column.
+
+b. A new variable, tripduration, is created by differentiating start time from end time of a trip). The variable is then converted to numeric value.
+
+c. Variables start_station_id and end_station_id are converted to character variable for analysis
+
+d. member_casual variable should be converted as factor and renamed to usertype.
+
+e. rideable_type is also converted to factor variable and its unique entries are also renamed.
+
+
+#### Parsing started_at column
+
+```{r}
+
+Trips$date <- as.Date(Trips$started_at)
+Trips$month <-  month(Trips$started_at, label = T, abbr =F)
+Trips$hour <- hour(Trips$started_at)
+Trips$day <-  format(as.Date(Trips$date), "%d")
+Trips$year <-  format(as.Date(Trips$date), "%Y")
+Trips$day_of_week <-  wday(Trips$started_at, label = T, abbr =F)
+
+colnames(Trips)
+
+```
+
+#### Creating tripduration
+
+```{r}
+
+Trips$tripduration <- difftime(Trips$ended_at, Trips$started_at)
+
+```
+
+Checking to make sure tripduration is numeric
+
+```{r}
+
+class(Trips$tripduration)
+
+```
+
+Need to change variable tripsduration data type to numeric
+
+```{r}
+
+Trips$tripduration <- as.numeric(as.character(Trips$tripduration))
+
+```
+
+Checking again
+
+```{r}
+
+is.numeric(Trips$tripduration)
+
+```
+
+#### Converting start_station_id and end_station_id to character variable
+
+```{r}
+
+Trips <- mutate(Trips, start_station_id = as.character(start_station_id),
+                   end_station_id = as.character(end_station_id))
+
+```
+
+#### Renaming and converting variable member_casual
+
+```{r}
+
+Trips <- rename(Trips
+                   ,usertype = member_casual)
+
+Trips <- mutate(Trips, usertype = as.factor(usertype)
+  )
+
+```
+
+Checking for changes
+
+```{r}
+
+unique(Trips$usertype)
+
+```
+
+#### Renaming unique entries of the rideable_type columns
+
+```{r}
+
+Trips <-  Trips %>% 
+  mutate(rideable_type = recode(as.factor(rideable_type)
+                           ,"docked_bike" = "docked"
+                           ,"classic_bike" = "classic"
+                           ,"electric_bike" = "electric"))
+
+```
+
+Checking for changes
+
+```{r}
+
+unique(Trips$rideable_type)
+
+```
+
+Checking entire data frame before data cleaning
+
+```{r}
+
+summary.default(Trips)
+
+```
+
+
+### Step 3: Cleaning Data
+
+Observing data for any required cleaning
+
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 100px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+```
+
+```{r, class.output="scroll-100"}
+
+unique(Trips$start_station_name)
+
+unique(Trips$end_station_name)
+
+```
+
+Some of the cleaning required is:
+
+a. Variable ride_id should be checked for any duplicate entries.
+
+b. Missing entries should be checked for both start and end stations
+
+c. Wrong station entries are also needed to be removed
+
+#### Duplicate Entries
+
+```{r}
+
+print(paste(nrow(Trips) - nrow(Trips[!duplicated(Trips$ride_id), ]), "duplicated rows"))
+
+```
+
+#### Missing Entries
+
+Checking for missing entries across Trips data frame
+
+```{r}
+
+colSums(is.na(Trips))
+
+```
+
+I choose to remove NA entries from start and end station names columns. This also removes other NAs.
+
+```{r}
+
+Trips <- Trips[!is.na(Trips$start_station_name),]
+
+Trips <- Trips[!is.na(Trips$end_station_name),]
+
+```
+
+Checking again for missing entries
+
+```{r}
+
+colSums(is.na(Trips))
+
+```
+
+#### Wrong station entries
+
+Remove rows which have DIVVY CASSETTE REPAIR MOBILE STATION or HUBBARD ST BIKE CHECKING or WATSON TESTING DIVVY as start or end station names as they are administrative stations.
+
+```{r}
+
+Trips <- Trips[!(Trips$start_station_name == "DIVVY CASSETTE REPAIR MOBILE STATION" | Trips$start_station_name == "HUBBARD ST BIKE CHECKING (LBS-WH-TEST)" | Trips$start_station_name == "WATSON TESTING DIVVY" | Trips$end_station_name == "DIVVY CASSETTE REPAIR MOBILE STATION" | Trips$end_station_name == "HUBBARD ST BIKE CHECKING (LBS-WH-TEST)" | Trips$end_station_name == "WATSON TESTING DIVVY"),]
+
+```
+
+Checking if wrong are removed
+
+```{r, class.output="scroll-100"}
+
+unique(Trips$start_station_name)
+
+unique(Trips$end_station_name)
+
+```
+
+### Step 4: Descriptive Analysis
+
+Following descriptive analysis is conducted:
+
+a. Descriptive analysis on tripduration.
+
+b. Compare members and casual users.
+
+c. Average ride time by each day for members vs casual users.
+
+d. Ridership data by type and weekday
+
+
+#### Descriptive analysis on tripduration
+
+```{r}
+
+summary(Trips$tripduration)
+
+```
+
+The data frame includes a few hundred entries when bikes were taken out of docks and checked for quality by Divvy or tripduration was negative. Removing the negative values of tripduration
+
+```{r}
+
+Trips <- Trips[!(Trips$tripduration < 0),]
+
+```
+
+Checking again
+
+```{r}
+
+summary(Trips$tripduration)
+
+```
+
+
+#### Compare members and casual users
+
+```{r}
+
+aggregate(Trips$tripduration ~ Trips$usertype, FUN = mean)
+
+aggregate(Trips$tripduration ~ Trips$usertype, FUN = median)
+
+aggregate(Trips$tripduration ~ Trips$usertype, FUN = max)
+
+aggregate(Trips$tripduration ~ Trips$usertype, FUN = min)
+
+```
+
+#### Average ride time by each day for members vs casual users
+
+```{r}
+
+aggregate(Trips$tripduration ~ Trips$usertype + Trips$day_of_week, FUN = mean)
+
+```
+
+Fixing the order of the days of the week
+
+```{r}
+
+Trips$day_of_week <- ordered(Trips$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+```
+
+The average ride time by each day for members vs casual users
+
+```{r}
+
+aggregate(Trips$tripduration ~ Trips$usertype + Trips$day_of_week, FUN = mean)
+
+```
+
+#### Analyze ridership data by type and weekday
+
+```{r}
+
+# grouping by each day and then summarising using n()
+# using wday() function to get days of the week as ordered factor
+
+Trips %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>%
+  group_by(usertype, weekday) %>%  
+  summarise(number_of_rides = n(), average_duration = mean(tripduration), total_trip =sum(tripduration))
+
+```
+
+### Step 5: Exporting Csv File
+
+Create a csv file that we will visualize in Tableau
+
+```{r}
+
+#write_csv(Trips, file = "C:/Users/Sony/Documents/Trips.csv", col_names = TRUE)
+
+```
+
+### Step 6: Visualize Data
+
+Following visualization shall be made:
+
+
+#### Time Analysis
+
+● number of trips by hours
+
+● average number of trips by hours
+
+● total trip time by hours
+
+● number of rides by day of the week
+
+● average duration by day of the week
+
+● total trip time by day of the week
+
+● analysis of trips length by day and segmented by users
+
+● average trip length by day and segmented by users
+
+● total trip length by day and segmented by users
+
+● number of trips by month
+
+● average trips time by month
+
+● total trips time by month
+
+
+#### Analysis on bike types
+
+● number of rides by bike type
+
+● average trip time by bike type
+
+● total trip time by bike type
+
+
+#### Stations Analysis
+
+● 10 most popular start stations
+
+● 10 most popular end stations
+
+● mapview of the most popular 30 start stations
+
+● mapview of the most popular 30 end stations
+
+
+#### Number of trips by hours
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, hour) %>% 
+  summarise(
+    number_of_rides = n(),
+    average_tripduration = mean(tripduration),
+    total_trip = sum(tripduration)
+  ) %>% 
+  ggplot(aes(hour, number_of_rides, fill = usertype))+ 
+  geom_col(position = "dodge")+ 
+  scale_y_continuous()+
+  labs(
+    title = "Number of Trips per Hour",
+    subtitle = "Number of trips for every hour and by users",
+    x = "hour of the day",
+    y = "number of rides",
+  )+
+  theme()
+
+```
+
+#### Average number of trips by hours
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, hour) %>% 
+  summarise(
+    number_of_rides = n(),
+    average_tripduration = mean(tripduration),
+    total_trip = sum(tripduration)
+  ) %>% 
+  ggplot(aes(hour, average_tripduration, fill = usertype))+ 
+  geom_col(position = "dodge")+ 
+  scale_y_continuous()+
+  labs(
+    title = "Average Number of Trips per Hour",
+    subtitle = "Number of trips for every hour segmented by users",
+    x = "hour of the day",
+    y = "average trips duration",
+  )+
+  theme()
+
+```
+
+#### Total trip length time by hours
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, hour) %>% 
+  summarise(
+    number_of_rides = n(),
+    average_tripduration = mean(tripduration),
+    total_trip = sum(tripduration)
+  ) %>% 
+  ggplot(aes(hour, total_trip, fill = usertype))+ 
+  geom_col(show.legend = TRUE, position = "dodge")+ 
+  scale_y_continuous()+
+  labs(
+    title = "Total trip Duration per Hour",
+    subtitle = "Total duration for every hour segmented by users",
+    x = "hour of the day",
+    y = "total duration",
+  )+
+  theme()
+
+```
+
+#### Number of rides by day of the week
+
+```{r}
+
+#Taking the above sorted ridership data by type and weekday to visualize
+
+Trips %>% 
+  group_by(usertype, day_of_week) %>% 
+  summarise(number_of_rides = n(), average_duration = mean(tripduration), 
+            total_trip =sum(tripduration)) %>% 
+  
+  ggplot(aes(x = day_of_week, y = number_of_rides, fill = usertype)) +
+  geom_col(position = "dodge")
+
+```
+
+#### Average duration by day of the week
+
+```{r}
+
+#Taking the above sorted ridership data by type and weekday to visualize
+
+Trips %>% 
+  group_by(usertype, day_of_week) %>% 
+  summarise(number_of_rides = n(), average_duration = mean(tripduration), 
+            total_trip =sum(tripduration)) %>% 
+  
+  ggplot(aes(x = day_of_week, y = average_duration, fill = usertype)) +
+  geom_col(position = "dodge")
+
+```
+
+#### Total trip length by day of the week
+
+```{r}
+
+Trips %>% 
+  group_by(usertype, day_of_week) %>% 
+  summarise(number_of_rides = n(), 
+            average_duration = mean(tripduration), 
+            total_trip =sum(tripduration)) %>% 
+  
+  ggplot(aes(x = day_of_week, y = total_trip, fill = usertype)) +
+  geom_col(position = "dodge")
+
+```
+
+#### Trips length by day of the year
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, day) %>% 
+  summarise(
+    number_trips_day = n(),
+    average_duration_day = mean(tripduration),
+    total_duration_day = sum(tripduration)
+  ) %>% 
+  ggplot(aes(day, number_trips_day, fill = usertype))+
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = comma)+
+  labs(
+    title = "Number of Trips per day and Segmented by Users",
+    subtitle = "Number of trips per day",
+    x = "number of trips",
+    y = "day"
+  )+
+  theme()
+
+```
+
+#### Average trip length by day and segmented by users
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, day) %>% 
+  summarise(
+    number_trips_day = n(),
+    average_duration_day = mean(tripduration),
+    total_duration_day = sum(tripduration)
+  ) %>% 
+  ggplot(aes(day, average_duration_day, fill = usertype))+
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = comma)+
+  labs(
+    title = "Average Trip Time per day and Segmented by Users",
+    subtitle = "Length of trips per day",
+    x = "avg trip duration",
+    y = "day"
+  )+
+  theme()
+
+```
+
+#### Total trip length by day and segmented by users
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, day) %>% 
+  summarise(
+    number_trips_day = n(),
+    average_duration_day = mean(tripduration),
+    total_duration_day = sum(tripduration)
+  ) %>% 
+  ggplot(aes(day, total_duration_day, fill = usertype))+
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = comma)+
+  labs(
+    title = "Total Trip Duration per day and Segmented by Users",
+    subtitle = "Total trip duration per day",
+    x = "total trip duration",
+    y = "day"
+  )+
+  theme()
+
+```
+
+#### Number trips by month
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, month) %>% 
+  summarise(
+    number_rides_month = n(),
+    average_rides_month = mean(tripduration),
+    total_time_month = sum(tripduration)
+  ) %>% 
+  ggplot(aes(month, number_rides_month, fill = usertype))+
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = comma)+
+  labs(
+    title = "Number of Trips by Month and Segmented by Users",
+    subtitle = "Number Trips Time for every Month",
+    x = "month",
+    y = " number of trips"
+  )+
+  theme()
+
+```
+
+#### Average trips time by month
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, month) %>% 
+  summarise(
+    number_rides_month = n(),
+    average_rides_month = mean(tripduration),
+    total_time_month = sum(tripduration)
+  ) %>% 
+  ggplot(aes(month, average_rides_month, fill = usertype))+
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = comma)+
+  labs(
+    title = "Average Trips Time by Month and Segmented by Users",
+    subtitle = "Average Trips Time for every Month",
+    x = "month",
+    y = "average trips time"
+  )+
+  theme()
+
+```
+
+#### Total trips time by month
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, month) %>% 
+  summarise(
+    number_rides_month = n(),
+    average_rides_month = mean(tripduration),
+    total_time_month = sum(tripduration)
+  ) %>% 
+  ggplot(aes(month, total_time_month, fill = usertype))+
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = comma)+
+  labs(
+    title = "Total Trips Time by Month and Segmented by Users",
+    subtitle = "Total Trips Time for every Month",
+    x = "month",
+    y = "total trips time"
+  )+
+  theme()
+
+```
+
+#### Number of rides by bike type
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, rideable_type
+  ) %>% 
+  summarise(
+    number_bike_ride = n(),
+    average_bike_ride = mean(tripduration),
+    total_bike_ride = sum(tripduration)
+  ) %>% 
+  ggplot(aes(rideable_type, number_bike_ride, fill = usertype))+
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = comma)+
+  labs(
+    title = "Number of Trips per Bike Type and Segregated by Users",
+    subtitle = "Number of trips per bike type",
+    x = "bike type",
+    y = "number of trips"
+  )+
+  theme()
+
+```
+
+#### Average trip time by bike type
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, rideable_type
+  ) %>% 
+  summarise(
+    number_bike_ride = n(),
+    average_bike_ride = mean(tripduration),
+    total_bike_ride = sum(tripduration)
+  ) %>% 
+  ggplot(aes(rideable_type, average_bike_ride, fill = usertype))+
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = comma)+
+  labs(
+    title = "Average trip time per Bike Type and Segregated by Users",
+    subtitle = "Average trip time per bike type",
+    x = "bike type",
+    y = "average trip time"
+  )+
+  theme()
+
+```
+
+#### Total trip time by bike type
+
+```{r}
+
+Trips %>% 
+  group_by(
+    usertype, rideable_type
+  ) %>% 
+  summarise(
+    number_bike_ride = n(),
+    average_bike_ride = mean(tripduration),
+    total_bike_ride = sum(tripduration)
+  ) %>% 
+  ggplot(aes(rideable_type, total_bike_ride, fill = usertype))+
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = comma)+
+  labs(
+    title = "Total trip time per Bike Type and Segregated by Users",
+    subtitle = "Total trip time per bike type",
+    x = "bike type",
+    y = "total trip time"
+  )+
+  theme()
+
+```
+
+#### Most popular 10 start stations
+
+```{r}
+
+#most popular start stations for number of rides taken
+
+pop_start_station <- Trips %>% 
+  group_by(
+    usertype, start_station_name, start_lat, start_lng
+  ) %>% 
+  summarise(
+    number_rides_start = n()
+  ) %>% 
+  arrange(-number_rides_start) 
+
+# 10 most popular start stations for number of rides taken
+
+pop_start_station[1:10, ] %>% 
+  ggplot(aes(start_station_name, number_rides_start, fill = usertype))+
+  geom_col(position = "dodge")+
+  coord_flip()+
+  labs(
+    title = "Most Popular Start Stations",
+    subtitle = "Top 10 most popular start stations",
+    x = "station name",
+    y = "number of trips"
+  )+
+  theme()
+
+```
+
+#### Most popular 10 end stations
+
+```{r}
+
+#most popular end stations
+
+pop_end_station <- Trips %>% 
+  group_by(
+    usertype, end_station_name, end_lat, end_lng
+  ) %>% 
+  summarise(
+    number_rides_end = n()
+  ) %>% 
+  arrange(-number_rides_end) 
+
+# 10 most popular end stations
+
+pop_end_station[1:10, ] %>% 
+  ggplot(aes(end_station_name, number_rides_end, fill = usertype))+
+  geom_col(position = "dodge")+
+  coord_flip()+
+  labs(
+    title = "Most Popular End Stations",
+    subtitle = "Top 10 most popular end stations",
+    x = "station name",
+    y = "number of trips"
+  )+
+  theme()
+
+```
+
+#### Mapview of the most popular 30 start stations
+
+```{r}
+
+pop_start_station[1:30, ] %>%
+  mapview(
+    xcol = "start_lng", 
+        ycol = "start_lat",
+        cex = "number_rides_start",
+        alpha = 0.9, 
+        crs = 4269,
+        color = "#8b0000",
+        grid = F, 
+        legend = T,
+        layer.name = "30 Most Popular Start Stations"
+  )
+
+```
+
+#### Mapview of the most popular 30 end stations
+
+```{r}
+
+pop_end_station[1:30,] %>% 
+  mapview(
+    xcol = "end_lng",
+    ycol = "end_lat",
+    cex = "number_rides_end", # size of circle based on value size
+    alpha = 0.9,
+    crs = 4269,
+    color = "#8b0000",
+    grid = F,
+    legend = T,
+    layer.name = "30 Most Popular End Stations"
+  )
+
+```
+
+#### Guiding questions 
+
+● How should you organize your data to perform analysis on it? 
+
+Making sure all the columns are consistent as well as the data formatted within it.
+
+● Has your data been properly formatted? 
+
+The data has been formatted properly.
+
+● What surprises did you discover in the data?
+
+Dates in the data sets Data_2022_01 are formatted differently.
+
+● What trends or relationships did you find in the data? 
+
+It was found that casual riders take longer rides and are more active on the weekends, Saturday and Sunday evening. They show greater movements in months from March to October. They prefer docked bikes.
+
+As for the members, they are more in number than casuals in the dataset, they take trips more often, for shorter durations and classic and electric docked bikes.
+
+● How will these insights help answer your business questions?
+
+These insights help understand how riders use the service differently.
+
+#### Deliverable 
+
+- [x] A summary of your analysis
+
+-----------------
+
+## SHARE
+
+#### Key tasks 
+
+1. Determine the best way to share your findings. 
+2. Create effective data visualizations. 
+3. Present your findings. 
+4. Ensure your work is accessible.
+
+#### Guiding questions 
+
+● Were you able to answer the question of how annual members and casual riders use Cyclistic bikes differently? 
+
+The insights drawn from the analysis has helped differentiate the use of the service.
+
+● What story does your data tell? 
+
+Casual users and members use the Cyclistic service very differently but we can adjust to change casual to members.
+
+● How do your findings relate to your original question? 
+
+My findings relate to my original question by building a profile for members, finding key differences between casual and members, and why each group uses bikes.
+
+● Who is your audience? What is the best way to communicate with them? 
+
+My audience is the executive marketing team of Cyclistic.
+
+● Can data visualization help you share your findings? 
+
+Data Visualizations can help me share my findings by summarizing all the complex data saved into a visual graphic. 
+
+● Is your presentation accessible to your audience?
+
+Yes, I worked to make sure my presentation is accessible to everyone.
+
+#### Deliverable 
+
+Supporting visualizations and key findings
+
+-----------------
+
+## ACT
+
+#### Key tasks
+
+1. Create your portfolio. 
+2. Add your case study. 
+3. Practice presenting your case study to a friend or family member.
+
+#### Guiding questions
+
+● What is your final conclusion based on your analysis? 
+
+Members and casual riders have different riding profiles. See share section for more details.
+
+● How could your team and business apply your insights? 
+
+My team and business could apply my insights by developing a marketing campaign to turn casual riders into members.
+
+● What next steps would you or your stakeholders take based on your findings? 
+
+The next steps I would take would be to go deeper into the data to find more discoveries. At this point the marketing team could take this information to create their digital campaign.
+
+● Is there additional data you could use to expand on your findings?
+
+There is additional data I could use to expand my findings. The most recent monthly data will continue to develop and change, demonstrating to us the changing profile of members and casual riders.
+
+#### Deliverable 
+
+## RECOMMENDATIONS
+
+Your top three recommendations based on your analysis
+
+1. I would recommend the marketing team to show the bikes as a good alternative to riding a car, showing the positive impact it has on the environment, getting exercise, and decreasing traffic congestion.
+
+2. Marketing campaign should be focused for the busiest casual rider days (Saturday, and Sunday), busiest hours (evenings), and most popular months to reach the most riders (July and August).
+
+3. The casual riders’ favourite start and end stations should be the focus of the marketing campaign. Besides start and end stations, marketing can focus on specific places of interest to casual riders and advertise the service on those places.
+
+
+------------
